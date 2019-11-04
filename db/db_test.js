@@ -39,8 +39,10 @@ const UserModel = mongoose.model('user', userSchema)
 /*
 三. 通过Model或其实例对集合数据进行CRUD操作
 1. 通过Model实例用save()添加数据
+2. 通过Model的find()/findOne()查询多个或一个数据
 */
 
+// 添加文档
 function testSave() {
     // 创建UserModel的实例
     // mongoDB自动生成user文档id
@@ -58,7 +60,7 @@ function testSave() {
     })
 }
 
-testSave()
+// testSave()
 
 /* 
 OUTPUT: 
@@ -71,3 +73,49 @@ save() null {
 }
 */
 
+// 查询文档
+function testFind() {
+    // 查询多个文档
+    UserModel.find(function(error, users) { // 这里的UserModel是一个函数对象
+        console.log('find()', error, users)
+    })
+    
+    // 查询一个文档
+    UserModel.findOne({_id: '5dbfae76815131133c1e4869'}, function(error, user) {
+        console.log('findOne()', error, user)
+    })
+}
+
+testFind()
+
+/*
+OUTPUT:
+如果有匹配：
+find() null [
+  {
+    _id: 5dbfa8f546d8a91ab0bbd01d,
+    username: 'Mario',
+    password: 'b4af804009cb036a4ccdc33431ef9ac9',
+    type: 'findJob',
+    __v: 0
+  },
+  {
+    _id: 5dbfae76815131133c1e4869,
+    username: 'Yoshi',
+    password: 'b4af804009cb036a4ccdc33431ef9ac9',
+    type: 'recruit',
+    __v: 0
+  }
+]
+findOne() null {
+  _id: 5dbfae76815131133c1e4869,
+  username: 'Yoshi',
+  password: 'b4af804009cb036a4ccdc33431ef9ac9',
+  type: 'recruit',
+  __v: 0
+}
+
+如果沒有匹配：
+find() null []
+findOne() null null
+*/
