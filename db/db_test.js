@@ -41,6 +41,7 @@ const UserModel = mongoose.model('user', userSchema)
 1. 通过Model实例用save()添加数据
 2. 通过Model的find()/findOne()查询多个或一个数据
 3. 通过Model的findByIdAndUpdate()更新某个数据
+4. 通过Model的remove()删除匹配的数据
 */
 
 // 添加文档
@@ -128,4 +129,21 @@ function testUpdate() {
     })
 }
 
-testUpdate()
+// testUpdate()
+
+// 删除一个文档
+function testRemove() {
+    UserModel.remove({_id: '5bf5d26b36481903fa579b7c'}, function(error, doc) {
+        console.log('remove()', error, doc)
+    })
+}
+
+testRemove()
+
+/*
+OUTPUT:
+如果有匹配：
+remove() null { n: 1, ok: 1 }
+如果沒有匹配：
+remove() null { n: 0, ok: 1 }
+*/
