@@ -40,6 +40,7 @@ const UserModel = mongoose.model('user', userSchema)
 三. 通过Model或其实例对集合数据进行CRUD操作
 1. 通过Model实例用save()添加数据
 2. 通过Model的find()/findOne()查询多个或一个数据
+3. 通过Model的findByIdAndUpdate()更新某个数据
 */
 
 // 添加文档
@@ -119,3 +120,12 @@ findOne() null {
 find() null []
 findOne() null null
 */
+
+// 更新某个文档
+function testUpdate() {
+    UserModel.findByIdAndUpdate({_id: '5dbfa8f546d8a91ab0bbd01d'}, {username: 'Luigi'}, function(error, oldUser) {
+        console.log('findByIdAndUpdate()', error, oldUser)
+    })
+}
+
+testUpdate()
