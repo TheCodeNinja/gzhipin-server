@@ -10,7 +10,10 @@
 
 const md5 = require('blueimp-md5')
 const mongoose = require('mongoose')
-mongoose.connect('mongodb://localhost:27017/gzhipin', { useNewUrlParser: true })
+mongoose.connect(
+    'mongodb://localhost:27017/gzhipin', 
+    { useUnifiedTopology: true, useNewUrlParser: true }
+)
 const conn = mongoose.connection
 conn.on('connected', () => {
     console.log('DB connected successfully!')
