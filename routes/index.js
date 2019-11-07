@@ -67,5 +67,65 @@ router.post('/login', function(req, res) {
   })
 })
 
+// 更新用戶信息的路由
+router.post('/update', function(req, res) {
+  const user = req.body // 沒有 _id
+  // 从browser請求發送出的cookie得到userId
+  const userId = req.cookies.userId
+  // 如不存在userId
+  if (!userId) {
+    return res.send({code: 1, msg: '请先登陆'}) // "return" = 結束程式繼續往下执行
+  }
+  // 如存在userId
+  // 根据userId更新数据庫对应的user文档(document)
+  UserModel.findByIdAndUpdate({_id: userId}, user, function(error, oldUser) {
+    // 如旧user沒有返回
+    if (!oldUser) {
+      // 通知browser删除該userId的cookie
+      res.clearCookie('userId')
+      res.send({code: 1, msg: '请先登陆'})
+    }
+    // 如旧user有返回
+    else {
+      const {_id, username, type} = oldUser // 拆解oldUser对象
+      // 准备一个返回的user数据对象
+      // assign(obj1, obj2, obj3, ...) 將多个指定的对象合并, 返回一个合并后的对象
+      const data = Object.assign(user, {_id, username, type})
+      res.send({code: 0, data})
+      
+      /*
+      Successful response to browser for bossinfo update:
+
+      {
+        "code": 0,
+        "data": {
+          "header": "头像10",
+          "post": "front-end developer",
+          "company": "google",
+          "salary": "20k",
+          "info": "javascript",
+          "_id": "5dbfd4ce59393d089c096c3f",
+          "username": "Mario",
+          "type": "recruit"
+        }
+      }
+
+      Successful response to browser for jobseekerinfo update:
+
+      {
+        "code": 0,
+        "data": {
+          "header": "头像10",
+          "post": "front-end developer",
+          "info": "know javascript, python",
+          "_id": "5dbfd4ac59393d089c096c3e",
+          "username": "Yoshi",
+          "type": "findJob"
+        }
+      }
+      */
+    }
+  })
+})
 
 module.exports = router;
