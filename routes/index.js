@@ -128,4 +128,20 @@ router.post('/update', function(req, res) {
   })
 })
 
+// 獲取用戶信息的路由(根居cookie中的userId)
+router.get('/user', function(req, res) {
+  const user = req.body // 沒有 _id
+  // 从browser請求發送出的cookie得到userId
+  const userId = req.cookies.userId
+  // 如不存在userId
+  if (!userId) {
+    return res.send({code: 1, msg: '请先登陆'}) // "return" = 結束程式繼續往下执行
+  }
+  // 如存在userId
+  // 根居userId查詢對應的user
+  UserModel.findOne({_id: userId}, filter, function(error, user) {
+    res.send({code: 0, data: user})
+  })
+})
+
 module.exports = router;
