@@ -144,4 +144,16 @@ router.get('/user', function(req, res) {
   })
 })
 
+
+// 獲取指定類型的用戶信息路由
+router.get('/userlist', function(req, res) {
+  // 讀取發送路徑的query值
+  const { type } = req.query
+  // 按定類型查找數据
+  UserModel.find({type}, filter, function(error, users) {
+    // 返回數据
+    res.send({code: 0, data: users})
+  })
+})
+
 module.exports = router;
