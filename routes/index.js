@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 const md5 = require('blueimp-md5')
-const { UserModel } = require('../db/models')
+const { UserModel, ChatModel } = require('../db/models')
 const filter = {password: 0, __v: 0} // 指定過濾的属性
 
 /* GET home page. */
@@ -153,6 +153,50 @@ router.get('/userlist', function(req, res) {
   UserModel.find({type}, filter, function(error, users) {
     // 返回數据
     res.send({code: 0, data: users})
+  })
+})
+
+router.get('/msglist', function(req, res) {
+  // Read cookies' userId
+  const userId = req.cookies.userId
+  // Find user documents
+  UserModel.find(function(error, userDocs) { 
+    // const users = {} // Create empty object
+    // userDocs.forEach(userDoc => {
+    //   users[userDoc._id] = {username: userDoc.username, header: userDoc.header}
+    // })
+    const users = userDocs.reduce((users, userDoc) => {
+      users[userDoc._id] = {username: userDoc.username, header: userDoc.header}
+      return users
+    }, {})
+    /*
+      "users": {
+        "userDoc._id" {
+          "username": userDoc.username,
+          "header": userDoc.header
+        },
+      }
+    */
+    // 查詢userId相关的所有聊天信息
+    ChatModel.find({'$or': [{from: userId}, {to: userId}]}, filter, function(error, chatMsgDocs) {
+      res.send({code: 0, data: {users, chatMsgDocs}})
+    })
+  })
+})
+
+router.post('/readmsg', function(req, res) {
+  const from = req.body.from // sender's id
+  const to = req.cookies.userId // receiver's id
+  /*
+    Update chat
+    param 1: conditionals
+    param 2: update target
+    param 3: update multiple data
+    param 4: callback
+    */
+  ChatModel.update({from, to, read: false}, {read: true}, {multi: true}, function(err, doc) {
+    console.log('/readmsg', doc)
+    res.send({code: 0, data: doc.nModified})
   })
 })
 

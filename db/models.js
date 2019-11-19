@@ -40,5 +40,20 @@ const userSchema = mongoose.Schema({
 const UserModel = mongoose.model('user', userSchema)
 
 exports.UserModel = UserModel
+
+// 定義chats集合的文档結构
+const chatSchema = mongoose.Schema({
+    from: {type: String, required: true}, // sender's id
+    to: {type: String, required: true}, // receiver's id
+    chat_id: {type: String, required: true}, // chat's id
+    content: {type: String, required: true},
+    read: {type: Boolean, default: false},
+    created_at: {type: Number}
+})
+
+const ChatModel = mongoose.model('chat', chatSchema) // 集合為: chats
+
+exports.ChatModel = ChatModel
+
 // module.exports = xxx  这个方式只能写一次, 叫做一次性暴露
 // exports.xxx = value 这个方式可以写多次, 叫做分别暴露
